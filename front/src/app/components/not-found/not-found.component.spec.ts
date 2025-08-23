@@ -18,7 +18,9 @@ describe('NotFoundComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should render not found message', () => {
     expect(component).toBeTruthy();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('h1')?.textContent).toContain('Page not found !');
   });
 });
