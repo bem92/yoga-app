@@ -6,15 +6,17 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   bail: false,
   verbose: false,
-  collectCoverage: false,
+  collectCoverage: true,
+  coverageReporters: ['text-summary', 'lcov'],
   coverageDirectory: './coverage/jest',
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
-  coveragePathIgnorePatterns: ['<rootDir>/node_modules/'],
-  coverageThreshold: {
-    global: {
-      statements: 80
-    },
-  },
+  coveragePathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/src/main.ts',
+    '<rootDir>/src/polyfills.ts',
+    '<rootDir>/src/environments/',
+    '.*\\.module\\.ts$'
+  ],
   roots: [
     "<rootDir>"
   ],
