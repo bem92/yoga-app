@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
@@ -140,6 +140,37 @@ describe('FormComponent', () => {
     });
     expect(matSnackBar.open).toHaveBeenCalledWith('Session updated !', 'Close', { duration: 3000 });
     expect(sessionApiService.create).not.toHaveBeenCalled();
+  }));
+
+  it('should redirect to sessions if user is not admin', () => {
+    mockSessionService.sessionInformation.admin = false;
+    const localFixture = TestBed.createComponent(FormComponent);
+    localFixture.detectChanges();
+    expect(router.navigate).toHaveBeenCalledWith(['/sessions']);
+    mockSessionService.sessionInformation.admin = true;
+  });
+
+  it('should load session details when editing', fakeAsync(() => {
+    const session = { id: 1, name: 'Yoga', date: '2023-08-22', teacher_id: 1, description: 'Desc' } as any;
+    sessionApiService.detail.mockReturnValue(of(session));
+    jest.spyOn(router, 'url', 'get').mockReturnValue('/sessions/update/1');
+    const route = TestBed.inject(ActivatedRoute);
+    jest.spyOn(route.snapshot.paramMap, 'get').mockReturnValue('1');
+
+    const localFixture = TestBed.createComponent(FormComponent);
+    const localComponent = localFixture.componentInstance;
+    localFixture.detectChanges();
+    tick();
+    localFixture.detectChanges();
+
+    expect(sessionApiService.detail).toHaveBeenCalledWith('1');
+    expect(localComponent.onUpdate).toBe(true);
+    expect(localComponent.sessionForm?.value).toEqual({
+      name: 'Yoga',
+      date: '2023-08-22',
+      teacher_id: 1,
+      description: 'Desc'
+    });
   }));
 
   it('should display validation errors for invalid fields', () => {
