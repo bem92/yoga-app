@@ -1,19 +1,22 @@
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+import './commands'
+import '@cypress/code-coverage/support'
 
-// When a command from ./commands is ready to use, import with `import './commands'` syntax
-// import './commands';
+// Ne fais AUCUN login global ici. Pas de beforeEach qui tape des inputs.
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      mockLogin(role?: 'admin'|'user'): Chainable<void>
+      loginAs(role?: 'admin'|'user'): Chainable<void>
+      mockSessionsList(): Chainable<void>
+      mockSessionDetail(): Chainable<void>
+      mockCreateSession(): Chainable<void>
+      mockUpdateSession(): Chainable<void>
+      mockDeleteSession(): Chainable<void>
+      mockTeachers(): Chainable<void>
+      mockParticipate(): Chainable<void>
+      mockUnparticipate(): Chainable<void>
+    }
+  }
+}
 
-import '@cypress/code-coverage/support';
+export {}
