@@ -126,5 +126,13 @@ describe('DetailComponent', () => {
     unParticipateButton.click();
     expect(sessionApi.unParticipate).toHaveBeenCalledWith('1', '1');
   });
+
+  it('should go back when back() is called', async () => {
+    const fixture = await setup(true);
+    const component = fixture.componentInstance;
+    const backSpy = jest.spyOn(window.history, 'back');
+    component.back();
+    expect(backSpy).toHaveBeenCalled();
+  });
 });
 

@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { expect } from '@jest/globals';
 
 import { AuthService } from '../../services/auth.service';
@@ -76,6 +76,28 @@ describe('RegisterComponent', () => {
       password: '30'
     });
     expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  }));
+
+  it('should set error flag when registration fails', fakeAsync(() => {
+    authService.register.mockReturnValue(throwError(() => new Error('fail')));
+
+    const nativeElement = fixture.debugElement.nativeElement;
+    nativeElement.querySelector('input[formControlName="firstName"]').value = 'John';
+    nativeElement.querySelector('input[formControlName="firstName"]').dispatchEvent(new Event('input'));
+    nativeElement.querySelector('input[formControlName="lastName"]').value = 'Doe';
+    nativeElement.querySelector('input[formControlName="lastName"]').dispatchEvent(new Event('input'));
+    nativeElement.querySelector('input[formControlName="email"]').value = 'john@example.com';
+    nativeElement.querySelector('input[formControlName="email"]').dispatchEvent(new Event('input'));
+    nativeElement.querySelector('input[formControlName="password"]').value = '30';
+    nativeElement.querySelector('input[formControlName="password"]').dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+    tick();
+    fixture.detectChanges();
+
+    expect(component.onError).toBe(true);
+    expect(navigateSpy).not.toHaveBeenCalled();
   }));
 
   it('should display validation errors for invalid fields', () => {
