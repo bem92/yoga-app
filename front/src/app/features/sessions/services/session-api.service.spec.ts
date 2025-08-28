@@ -59,6 +59,16 @@ describe('SessionApiService', () => {
     req.flush(newSession);
   });
 
+  it('should delete a session', () => {
+    service.delete('1').subscribe((res) => {
+      expect(res).toBeUndefined();
+    });
+
+    const req = httpMock.expectOne('api/session/1');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
   it('should update a session', () => {
     const updatedSession: Session = { name: 's1', description: 'd1', date: new Date(), teacher_id: 1, users: [] };
 

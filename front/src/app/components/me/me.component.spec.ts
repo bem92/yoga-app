@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,7 +24,8 @@ describe('MeComponent', () => {
     sessionInformation: {
       admin: true,
       id: 1
-    }
+    } as any,
+    logOut: jest.fn()
   } as Partial<SessionService>;
 
   const mockUser: User = {
@@ -38,7 +40,8 @@ describe('MeComponent', () => {
   };
 
   const mockUserService = {
-    getById: () => of(mockUser)
+    getById: () => of(mockUser),
+    delete: jest.fn().mockReturnValue(of(null))
   } as Partial<UserService>;
 
   const matSnackBarMock = { open: jest.fn() };
@@ -75,5 +78,21 @@ describe('MeComponent', () => {
     expect(element.textContent).toContain('Name: John DOE');
     expect(element.textContent).toContain('Email: john.doe@example.com');
     expect(element.textContent).toContain('You are admin');
+  });
+
+  it('should go back on back()', () => {
+    const backSpy = jest.spyOn(window.history, 'back');
+    component.back();
+    expect(backSpy).toHaveBeenCalled();
+  });
+
+  it('should delete user and navigate home', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    component.delete();
+    expect(mockUserService.delete).toHaveBeenCalledWith('1');
+    expect(matSnackBarMock.open).toHaveBeenCalled();
+    expect(mockSessionService.logOut).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/']);
   });
 });
