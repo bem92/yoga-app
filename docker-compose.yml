@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: node-yoga:1.0
+    container_name: yoga-angular
+    working_dir: /app
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    command: >
+      sh -c "
+        sed -i 's#http://localhost:8080#http://backend:8080#g' src/proxy.config.json &&
+        sed -i 's#localhost:8080/api/#/api/#g' src/environments/environment.ts &&
+        sed -i 's#localhost:8080/api/#/api/#g' src/environments/environment.prod.ts &&
+        npm install --legacy-peer-deps &&
+        npx ng analytics off &&
+        ng serve --host 0.0.0.0 --disable-host-check
+      "
+    ports:
+      - "4200:4200"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    container_name: yoga-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: yoga
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - ./ressources/sql/script.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3306:3306"
+
+  backend:
+    image: maven:3.9-eclipse-temurin-11
+    container_name: yoga-backend
+    working_dir: /app
+    volumes:
+      - ./back:/app
+    command: mvn spring-boot:run
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://yoga-mysql:3306/yoga?allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=123456
