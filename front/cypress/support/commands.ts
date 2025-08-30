@@ -47,6 +47,14 @@ Cypress.Commands.add('mockUnparticipate', () => {
   cy.intercept('DELETE', '**/api/session/**/participate/**', { statusCode: 200 }).as('unparticipate')
 })
 
+// mocks user profile
+Cypress.Commands.add('mockUser', () => {
+  cy.intercept('GET', '**/api/user/**', { fixture: 'user.me.json' }).as('getMe')
+})
+Cypress.Commands.add('mockDeleteUser', () => {
+  cy.intercept('DELETE', '**/api/user/**', { statusCode: 200 }).as('deleteMe')
+})
+
 Cypress.Commands.add('verifySessionCreated', (sessionName: string) => {
   cy.url().should('include', '/sessions')
   cy.get('[data-cy="session-title"]').contains(sessionName).should('exist')

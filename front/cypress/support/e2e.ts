@@ -15,6 +15,8 @@ declare global {
       mockTeachers(): Chainable<void>
       mockParticipate(): Chainable<void>
       mockUnparticipate(): Chainable<void>
+      mockUser(): Chainable<void>
+      mockDeleteUser(): Chainable<void>
     }
   }
 }
