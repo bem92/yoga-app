@@ -28,4 +28,19 @@ describe('Login', () => {
     cy.wait('@login')
     cy.get('[data-cy="login-error"]')
   })
+
+  it('requires a valid form before enabling submit', () => {
+    cy.visit('/login')
+    cy.get('[data-cy="login-submit"]').should('be.disabled')
+    cy.get('[data-cy="login-email"]').type('not-an-email', { force: true })
+    cy.get('[data-cy="login-password"]').type('12', { force: true })
+    cy.get('[data-cy="login-submit"]').should('be.disabled')
+  })
+
+  it('toggles password visibility', () => {
+    cy.visit('/login')
+    cy.get('[data-cy="login-password"]').should('have.attr', 'type', 'password')
+    cy.get('button[mat-icon-button]').click()
+    cy.get('[data-cy="login-password"]').should('have.attr', 'type', 'text')
+  })
 })
