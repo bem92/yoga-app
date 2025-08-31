@@ -75,10 +75,9 @@ Rapport HTML : **back/target/site/jacoco/index.html**
 ### 3) End-to-End (Cypress)
 Exécution :
 ```bash
-docker exec -it yoga-angular npm run e2e:ci
-docker exec -it yoga-angular npx cypress run
+docker exec -it yoga-angular sh -lc "npm run e2e:ci && npm run e2e:coverage"
 ```
-Rapport HTML de couverture E2E : **front/coverage/lcov-report/index.html**  
+Rapport HTML de couverture E2E : **front/coverage/cypress/lcov-report/index.html**  
 
 
 **Sortie terminal :**
@@ -91,4 +90,4 @@ Rapport HTML de couverture E2E : **front/coverage/lcov-report/index.html**
 ## Récapitulatif des rapports
 - Front (Jest) : `front/coverage/jest/lcov-report/index.html`  
 - Back (JaCoCo) : `back/target/site/jacoco/index.html`  
-- E2E (Cypress) : `front/coverage/lcov-report/index.html`
+- E2E (Cypress) : `front/coverage/cypress/lcov-report/index.html`
