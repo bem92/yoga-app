@@ -1,5 +1,6 @@
 package com.openclassrooms.starterjwt.models;
 
+// Tests unitaires pour l'entité Session.
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SessionTest {
 
+    // Vérifie que le builder remplit correctement toutes les propriétés.
     @Test
     @DisplayName("Builder should create session with all fields")
     void builder_shouldCreateSession() {
@@ -29,6 +31,7 @@ class SessionTest {
         assertThat(session.getTeacher()).isEqualTo(teacher);
     }
 
+    // equals et hashCode doivent s'appuyer sur l'identifiant.
     @Test
     @DisplayName("equals should work on id")
     void equalsAndHashCode_shouldUseId() {
@@ -42,7 +45,7 @@ class SessionTest {
     @Test
     void hashCode_nullId_works() {
         Session session = new Session();
-        // verify hashCode executes even when id is null
+        // Vérifie que hashCode fonctionne même sans id.
         assertNotEquals(0, session.hashCode());
     }
 

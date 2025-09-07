@@ -1,9 +1,11 @@
+// Tests E2E pour la page d'inscription.
 describe('Register', () => {
+  // Scénario d'inscription réussie.
   it('registers a new user', () => {
     cy.intercept('POST', '/api/auth/register', {
       statusCode: 201,
       fixture: 'auth.user.json'
-    }).as('register')
+    }).as('register') // Interception de l'appel d'inscription.
     cy.visit('/register')
     cy.get('form').within(() => {
       cy.get('[data-cy="register-first-name"]').type('John', { force: true })
@@ -13,9 +15,10 @@ describe('Register', () => {
       cy.get('[data-cy="register-submit"]').click()
     })
     cy.wait('@register')
-    cy.url().should('include', '/login')
+    cy.url().should('include', '/login') // Redirection vers la connexion.
   })
 
+  // Vérifie l'affichage des messages d'erreur de validation.
   it('shows validation errors', () => {
     cy.visit('/register')
     cy.get('form').within(() => {

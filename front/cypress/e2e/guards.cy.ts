@@ -1,10 +1,13 @@
+// Tests E2E pour vérifier le comportement des garde-fous de routage.
 describe('Route guards', () => {
+  // Les utilisateurs non authentifiés sont redirigés vers la page de connexion.
   it('redirects unauthenticated users to login', () => {
     cy.visit('/sessions');
     cy.url().should('include', '/login');
   });
 
   context('authenticated user', () => {
+    // Avant chaque test authentifié, on mock la réponse de login et la liste des sessions.
     beforeEach(() => {
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
@@ -21,6 +24,7 @@ describe('Route guards', () => {
       cy.intercept('GET', '/api/session*', { statusCode: 200, body: [] }).as('getSessions');
     });
 
+    // Un utilisateur authentifié ne peut pas revenir sur les pages de connexion/inscription.
     it('prevents authenticated users from accessing auth pages', () => {
       cy.visit('/login');
       cy.get('[data-cy="login-email"]')
