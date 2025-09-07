@@ -1,3 +1,4 @@
+// Import des modules nécessaires pour l'environnement de test.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatCardModule } from '@angular/material/card';
@@ -8,14 +9,18 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { of } from 'rxjs';
 import { expect } from '@jest/globals';
 
+// Services et interfaces utilisés par le composant.
 import { SessionService } from 'src/app/services/session.service';
 import { SessionApiService } from '../../services/session-api.service';
 import { Session } from '../../interfaces/session.interface';
 
+// Composant testé.
 import { ListComponent } from './list.component';
 
+// Début de la suite de tests pour ListComponent.
 describe('ListComponent', () => {
 
+  // Liste de sessions simulées.
   const mockSessions: Session[] = [{
     id: 1,
     name: 'Morning Session',
@@ -25,6 +30,7 @@ describe('ListComponent', () => {
     users: []
   }];
 
+  // Fonction utilitaire pour initialiser le composant selon le rôle de l'utilisateur.
   async function setup(isAdmin: boolean): Promise<ComponentFixture<ListComponent>> {
     const sessionServiceMock = { sessionInformation: { admin: isAdmin } } as Partial<SessionService>;
     const sessionApiServiceMock = { all: () => of(mockSessions) } as Partial<SessionApiService>;
@@ -45,13 +51,15 @@ describe('ListComponent', () => {
       ]
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(ListComponent);
-    fixture.detectChanges();
-    return fixture;
+    const fixture = TestBed.createComponent(ListComponent); // Création du composant.
+    fixture.detectChanges(); // Initialisation du template.
+    return fixture; // Retourne le fixture pour les tests.
   }
 
+  // Nettoie le module de test après chaque exécution.
   afterEach(() => TestBed.resetTestingModule());
 
+  // L'administrateur voit les sessions et les boutons de création/détail.
   it('should render sessions with create and detail buttons for admin', async () => {
     const fixture = await setup(true);
     const element: HTMLElement = fixture.nativeElement;
@@ -61,6 +69,7 @@ describe('ListComponent', () => {
     expect(element.querySelector('.item mat-card-actions button')?.textContent).toContain('Detail');
   });
 
+  // Un utilisateur non admin ne voit pas le bouton de création.
   it('should hide create button for non-admin user', async () => {
     const fixture = await setup(false);
     const element: HTMLElement = fixture.nativeElement;
